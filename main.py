@@ -9,7 +9,8 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 
 # Load environment variables
-env_path = os.path.join(os.path.dirname(__file__), '.env')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+env_path = os.path.join(BASE_DIR, '.env')
 load_dotenv(env_path)
 
 app = FastAPI(title="ELI5 Tool API")
@@ -80,21 +81,18 @@ async def rewrite_text(request: RewriteRequest):
 async def health_check():
     return {"status": "healthy", "api_key_configured": bool(api_key)}
 
-# Serve static files (after API routes)
-app.mount("/static", StaticFiles(directory="."), name="static")
-
 @app.get("/")
 async def serve_index():
-    return FileResponse("index.html")
+    return FileResponse(os.path.join(BASE_DIR, "index.html"))
 
 @app.get("/style.css")
 async def serve_css():
-    return FileResponse("style.css")
+    return FileResponse(os.path.join(BASE_DIR, "style.css"))
 
 @app.get("/script.js")
 async def serve_js():
-    return FileResponse("script.js")
+    return FileResponse(os.path.join(BASE_DIR, "script.js"))
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
