@@ -9,7 +9,8 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()
+env_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(env_path)
 
 app = FastAPI(title="ELI5 Tool API")
 
@@ -46,14 +47,20 @@ def get_eli5_explanation(text: str):
     
     try:
         start_time = time.time()
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Using gemini-2.0-flash for better performance
+        model = genai.GenerativeModel('gemini-2.0-flash')
         response = model.generate_content(prompt)
+        
+        if not response.text:
+            raise ValueError("Empty response from AI")
+            
         results = response.text
         end_time = time.time()
         
         return results, end_time - start_time
         
     except Exception as e:
+        print(f"Error in AI generation: {str(e)}")
         raise HTTPException(status_code=500, detail=f"AI Generation Error: {str(e)}")
 
 @app.post("/rewrite", response_model=RewriteResponse)

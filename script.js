@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showToast = (message) => {
         toast.textContent = message;
         toast.classList.remove('hidden');
-        setTimeout(() => toast.classList.add('hidden'), 3000);
+        setTimeout(() => toast.classList.add('hidden'), 5000);
     };
 
     const handleRewrite = async () => {
@@ -38,9 +38,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ text }),
             });
 
+            const contentType = response.headers.get("content-type");
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Something went wrong');
+                let errorMessage = 'Something went wrong';
+                if (contentType && contentType.includes("application/json")) {
+                    const errorData = await response.json();
+                    errorMessage = errorData.detail || errorMessage;
+                } else {
+                    const textError = await response.text();
+                    errorMessage = textError.slice(0, 50) + "...";
+                }
+                throw new Error(errorMessage);
+            }
+
+            if (!contentType || !contentType.includes("application/json")) {
+                throw new Error("Server returned non-JSON response");
             }
 
             const data = await response.json();
