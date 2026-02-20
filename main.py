@@ -3,6 +3,8 @@ import time
 import google.generativeai as genai
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -70,6 +72,21 @@ async def rewrite_text(request: RewriteRequest):
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "api_key_configured": bool(api_key)}
+
+# Serve static files (after API routes)
+app.mount("/static", StaticFiles(directory="."), name="static")
+
+@app.get("/")
+async def serve_index():
+    return FileResponse("index.html")
+
+@app.get("/style.css")
+async def serve_css():
+    return FileResponse("style.css")
+
+@app.get("/script.js")
+async def serve_js():
+    return FileResponse("script.js")
 
 if __name__ == "__main__":
     import uvicorn

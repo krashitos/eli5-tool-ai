@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         outputSection.classList.add('hidden');
 
         try {
-            const response = await fetch('http://localhost:8000/rewrite', {
+            const response = await fetch('/rewrite', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
