@@ -1,8 +1,30 @@
 {
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/main.py"
+      "src": "main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/rewrite",
+      "dest": "main.py"
+    },
+    {
+      "src": "/health",
+      "dest": "main.py"
+    },
+    {
+      "src": "/style.css",
+      "dest": "main.py"
+    },
+    {
+      "src": "/script.js",
+      "dest": "main.py"
+    },
+    {
+      "src": "/",
+      "dest": "main.py"
     }
   ]
 }

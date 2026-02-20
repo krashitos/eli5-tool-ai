@@ -26,8 +26,10 @@ app.add_middleware(
 # Configure Gemini
 api_key = os.getenv("GOOGLE_API_KEY")
 if not api_key:
-    print("Warning: GOOGLE_API_KEY not found in .env")
-else:
+    # This might happen in Vercel if .env is not pushed
+    print("Warning: GOOGLE_API_KEY not found in .env. Attempting to use system environment variable.")
+    
+if api_key:
     genai.configure(api_key=api_key)
 
 class RewriteRequest(BaseModel):
